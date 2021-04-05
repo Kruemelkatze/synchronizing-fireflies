@@ -1,9 +1,16 @@
 import * as PIXI from 'pixi.js';
 import Assets from './assets';
 import Firefly from './firefly';
+import { blueNoise, whiteNoise } from './randomPositions';
+
+const PositionSampleType = {
+    WhiteNoise: Symbol.for("White Noise"),
+    BlueNoise: Symbol.for("Blue Noise"),
+};
 
 const Settings = {
     fireflyCount: 128,
+    positionSampleType: PositionSampleType.BlueNoise,
 }
 
 let type = "WebGL"
@@ -50,23 +57,21 @@ function addFireflies() {
 }
 
 function getPositions(count) {
-    let w = app.renderer.width;
-    let h = app.renderer.height;
+    var positions;
 
-    let positions = new Array(count);
-    for (let i = 0; i < positions.length; i++) {
-        let pos = {
-            x: Math.random() * w,
-            y: Math.random() * h,
-        };
+    var start = Date.now();
 
-        positions[i] = pos;
+    switch (Settings.positionSampleType) {
+        case PositionSampleType.BlueNoise:
+            positions = blueNoise(count, app.renderer.width, app.renderer.height);
+            break;
+        default:
+            positions = whiteNoise(count, app.renderer.width, app.renderer.height);
+            break;
     }
+
+    var elapsed = Date.now() - start;
+    console.log(`Evaluating ${count} positions using ${Settings.positionSampleType.toString()} took ${elapsed}ms.`)
 
     return positions;
 }
-
-const PositionSampleType = {
-    MathRandom: new Symbol("Math Random"),
-    BlueNoise: new Symbol("Blue Noise"),
-};
