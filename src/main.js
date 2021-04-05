@@ -8,9 +8,12 @@ const PositionSampleType = {
     BlueNoise: Symbol.for("Blue Noise"),
 };
 
-const Settings = {
+export const Settings = {
     fireflyCount: 128,
     positionSampleType: PositionSampleType.BlueNoise,
+    fireflySpeed: [60, 100],
+    fireflyRotSpeed: [Math.PI / 4, Math.PI /2],
+    fireflySize: 32,
 }
 
 let type = "WebGL"
