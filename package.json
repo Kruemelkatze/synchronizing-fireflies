@@ -1,0 +1,20 @@
+{
+  "name": "synchronizing-fireflies",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "parcel src/index.html",
+    "build": "parcel build src/index.html"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.5",
+    "sass": "^1.32.8"
+  },
+  "dependencies": {
+    "pixi.js": "^6.0.1"
+  }
+}
