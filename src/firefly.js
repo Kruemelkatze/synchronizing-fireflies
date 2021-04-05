@@ -1,12 +1,12 @@
 import * as PIXI from 'pixi.js';
-import Assets from './assets';
+import Assets, { getResource } from './assets';
 
 export default class Firefly {
 
     graphics = null;
 
     constructor(app, x, y) {
-        var sprite = new PIXI.Sprite(app.loader.resources.firefly.texture);
+        var sprite = new PIXI.Sprite(getResource(app, Assets.firefly).texture);
         sprite.x = x;
         sprite.y = y;
 

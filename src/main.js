@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import Assets from './assets';
+import Assets, { loadAllAssets } from './assets';
 import Firefly from './firefly';
 import { blueNoise, whiteNoise } from './randomPositions';
 
@@ -27,15 +27,13 @@ const app = new PIXI.Application({
 });
 document.body.appendChild(app.view);
 
-const loader = app.loader;
 
 window.addEventListener("resize", function () {
     app.renderer.resize(window.innerWidth, window.innerHeight);
 });
 
-
 // load the texture we need
-loader.add('firefly', Assets.firefly).load((loader, resources) => setup(loader, resources));
+loadAllAssets(app).load((loader, resources) => setup(loader, resources));
 function setup(loader, resources) {
     addFireflies();
 }
