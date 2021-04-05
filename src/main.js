@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import Assets, { loadAllAssets } from './assets';
 import Firefly from './firefly';
+import IncidenceMatrix from './incidenceMatrix';
 import { blueNoise, whiteNoise } from './randomPositions';
 
 const PositionSampleType = {
@@ -12,8 +13,9 @@ export const Settings = {
     fireflyCount: 128,
     positionSampleType: PositionSampleType.BlueNoise,
     fireflySpeed: [60, 100],
-    fireflyRotSpeed: [Math.PI / 4, Math.PI /2],
+    fireflyRotSpeed: [Math.PI / 4, Math.PI / 2],
     fireflySize: 32,
+    range: 256,
 }
 
 let type = "WebGL"
@@ -38,7 +40,12 @@ window.addEventListener("resize", function () {
 // load the texture we need
 loadAllAssets(app).load((loader, resources) => setup(loader, resources));
 function setup(loader, resources) {
-    addFireflies();
+    var fireflies = addFireflies();
+    var incidenceMatrix = new IncidenceMatrix(fireflies, Settings.range);
+
+    app.ticker.add((delta) => {
+        incidenceMatrix.updateIncidenceMatrix();
+    })
 }
 
 function addFireflies() {
@@ -55,6 +62,8 @@ function addFireflies() {
             firefly.update(delta);
         }
     });
+
+    return fireflies;
 }
 
 function getPositions(count) {

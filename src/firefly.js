@@ -12,6 +12,9 @@ export default class Firefly {
     speed = 0;
     rotationalSpeed = 0;
 
+    get x() { return this.graphics.x }
+    get y() { return this.graphics.y }
+
     constructor(app, x, y) {
         this.app = app;
 

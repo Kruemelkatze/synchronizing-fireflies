@@ -2,6 +2,7 @@ import _ from 'lodash';
 import RBush from 'rbush';
 
 import knn from './rbush-knn';
+import { distanceSqr, indexOfMax } from './utils';
 
 export function whiteNoise(count, w = 1, h = 1, centered = false) {
     var positions = new Array(count);
@@ -69,14 +70,4 @@ function posToRect(x, y) {
         maxX: x,
         maxY: y,
     }
-}
-
-function distanceSqr(p1, p2) {
-    let dx = p1.x - p2.x;
-    let dy = p1.y - p2.y;
-    return dx * dx + dy * dy;
-}
-
-function indexOfMax(array) {
-    return array.reduce((iMax, x, i) => x > array[iMax] ? i : iMax, 0);
 }
