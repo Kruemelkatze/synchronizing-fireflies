@@ -1,6 +1,10 @@
 import * as PIXI from 'pixi.js';
-import fireflySprite from "../assets/firefly.png";
+import Assets from './assets';
+import Firefly from './firefly';
 
+const Settings = {
+    fireflyCount: 128,
+}
 
 let type = "WebGL"
 if (!PIXI.utils.isWebGLSupported()) {
@@ -24,24 +28,45 @@ window.addEventListener("resize", function () {
 
 
 // load the texture we need
-loader.add('firefly', fireflySprite).load((loader, resources) => {
-    // This creates a texture from a 'firefly.png' image.
-    const firefly = new PIXI.Sprite(resources.firefly.texture);
+loader.add('firefly', Assets.firefly).load((loader, resources) => setup(loader, resources));
+function setup(loader, resources) {
+    addFireflies();
+}
 
-    // Setup the position of the firefly
-    firefly.x = app.renderer.width / 2;
-    firefly.y = app.renderer.height / 2;
+function addFireflies() {
+    let positions = getPositions(Settings.fireflyCount);
 
-    // Rotate around the center
-    firefly.anchor.x = 0.5;
-    firefly.anchor.y = 0.5;
+    let fireflies = new Array(Settings.fireflyCount);
+    for (let i = 0; i < fireflies.length; i++) {
+        let pos = positions[i];
+        fireflies[i] = new Firefly(app, pos.x, pos.y);
+    }
 
-    // Add the firefly to the scene we are building.
-    app.stage.addChild(firefly);
-
-    // Listen for frame updates
-    app.ticker.add(() => {
-        // each frame we spin the firefly around a bit
-        firefly.rotation += 0.01;
+    app.ticker.add((delta) => {
+        for (let firefly of fireflies) {
+            firefly.update(delta);
+        }
     });
-});
+}
+
+function getPositions(count) {
+    let w = app.renderer.width;
+    let h = app.renderer.height;
+
+    let positions = new Array(count);
+    for (let i = 0; i < positions.length; i++) {
+        let pos = {
+            x: Math.random() * w,
+            y: Math.random() * h,
+        };
+
+        positions[i] = pos;
+    }
+
+    return positions;
+}
+
+const PositionSampleType = {
+    MathRandom: new Symbol("Math Random"),
+    BlueNoise: new Symbol("Blue Noise"),
+};
