@@ -16,6 +16,9 @@ export const Settings = {
     fireflyRotSpeed: [Math.PI / 4, Math.PI / 2],
     fireflySize: 32,
     range: 256,
+    blinkDelay: 3,
+    blinkTime: 0.2,
+    nudgeAmount: 0.1,
 }
 
 let type = "WebGL"
@@ -46,6 +49,8 @@ function setup(loader, resources) {
     app.ticker.add((delta) => {
         incidenceMatrix.updateIncidenceMatrix();
     })
+
+    Firefly.registerBlinkObserver(firefly => onBlink(firefly, fireflies, incidenceMatrix));
 }
 
 function addFireflies() {
@@ -76,7 +81,7 @@ function getPositions(count) {
             positions = blueNoise(count, app.renderer.width, app.renderer.height);
             break;
         default:
-            positions = whiteNoise(count, app.renderer.width, app.renderer.height);
+            positions = whiteNoise(count, app.renderer.width, app.renderer.height, Settings.fireflySize);
             break;
     }
 
@@ -84,4 +89,8 @@ function getPositions(count) {
     console.log(`Evaluating ${count} positions using ${Settings.positionSampleType.toString()} took ${elapsed}ms.`)
 
     return positions;
+}
+
+function onBlink(firefly, fireflies, incidenceMatrix) {
+    console.log("Blinked")
 }

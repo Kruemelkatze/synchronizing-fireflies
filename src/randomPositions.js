@@ -13,14 +13,14 @@ export function whiteNoise(count, w = 1, h = 1, centered = false) {
     return positions;
 }
 
-export function blueNoise(count, w = 1, h = 1, centered = false) {
+export function blueNoise(count, w = 1, h = 1, size = 0, centered = false) {
     var positions = new Array(count);
 
     if (count === 0)
         return positions;
 
     var tree = new RBush();
-    var startPos = setRectValues(randomPoint(w, h, centered));
+    var startPos = setRectValues(randomPoint(w, h, centered), size);
     tree.insert(startPos);
     positions[0] = startPos;
 
@@ -34,7 +34,7 @@ export function blueNoise(count, w = 1, h = 1, centered = false) {
 
         })
         var farthest = candidates[indexOfMax(distanceToClosest)];
-        farthest = setRectValues(farthest);
+        farthest = setRectValues(farthest, size);
         tree.insert(farthest);
         positions[pi] = farthest;
     }
@@ -55,19 +55,12 @@ function randomPoint(w = 1, h = 1, centered = false) {
     return { x, y };
 }
 
-function setRectValues(point) {
+function setRectValues(point, size) {
+    size = size || 0;
+
     point.minX = point.x;
     point.minY = point.y;
-    point.maxX = point.x;
-    point.maxY = point.y;
+    point.maxX = point.x + size;
+    point.maxY = point.y + size;
     return point;
-}
-
-function posToRect(x, y) {
-    return {
-        minX: x,
-        minY: y,
-        maxX: x,
-        maxY: y,
-    }
 }

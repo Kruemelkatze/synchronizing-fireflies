@@ -1,11 +1,14 @@
 import fireflySprite from "../assets/firefly.png";
+import lightSprite from "../assets/light.png";
 
 const Assets = {
     firefly: "firefly",
+    light: "light",
 }
 
 const AssetUrls = {
-    firefly: fireflySprite
+    firefly: fireflySprite,
+    light: lightSprite,
 }
 
 
