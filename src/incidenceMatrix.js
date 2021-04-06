@@ -25,7 +25,7 @@ export default class IncidenceMatrix {
         for (let i = 0; i < elements.length; i++) {
             for (let j = 0; j <= i; j++) {
                 if (i == j) {
-                    this.matrix[i][j] = true;
+                    this.matrix[i][j] = false;
                 } else {
                     var dsqr = distanceSqr(elements[i], elements[j]);
                     this.matrix[i][j] = dsqr <= rangeSqr;

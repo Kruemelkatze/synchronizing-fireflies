@@ -15,10 +15,10 @@ export const Settings = {
     fireflySpeed: [60, 100],
     fireflyRotSpeed: [Math.PI / 4, Math.PI / 2],
     fireflySize: 32,
-    range: 256,
-    blinkDelay: 3,
+    range: 512,
+    blinkDelay: 6,
     blinkTime: 0.2,
-    nudgeAmount: 0.1,
+    nudgeAmount: 0.12,
 }
 
 let type = "WebGL"
@@ -59,7 +59,7 @@ function addFireflies() {
     let fireflies = new Array(Settings.fireflyCount);
     for (let i = 0; i < fireflies.length; i++) {
         let pos = positions[i];
-        fireflies[i] = new Firefly(app, pos.x, pos.y);
+        fireflies[i] = new Firefly(app, i, pos.x, pos.y);
     }
 
     app.ticker.add((delta) => {
@@ -92,5 +92,10 @@ function getPositions(count) {
 }
 
 function onBlink(firefly, fireflies, incidenceMatrix) {
-    console.log("Blinked")
+    for (let i = 0; i < fireflies.length; i++) {
+        let other = fireflies[i];
+        if (incidenceMatrix.isNear(firefly.index, i)) {
+            other.nudge();
+        }
+    }
 }

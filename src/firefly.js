@@ -8,6 +8,8 @@ import { PIXIFactory, randomFromRange, randomSign } from './utils';
 export default class Firefly {
     static staticBlinkObservers = [];
 
+    index = 0;
+
     app = null;
     graphics = null;
 
@@ -19,13 +21,15 @@ export default class Firefly {
     rotationalSpeed = 0;
 
     clock = 5;
-    blinkedBefore = 0;
+    blinkedBefore = 100;
+    nudgedBefore = 100;
 
     get x() { return this.graphics.x }
     get y() { return this.graphics.y }
 
-    constructor(app, x, y) {
+    constructor(app, index, x, y) {
         this.app = app;
+        this.index = index;
 
         var container = new PIXI.Container();
 
@@ -60,6 +64,7 @@ export default class Firefly {
         // Clock
         this.clock = this.clock - deltaTime;
         this.blinkedBefore += deltaTime;
+        this.nudgedBefore += deltaTime;
 
         if (this.clock <= 0) {
             this.blink();
@@ -104,6 +109,11 @@ export default class Firefly {
         this.light.visible = true;
 
         Firefly.notifyBlinkObservers(this);
+    }
+
+    nudge() {
+        this.clock -= Settings.nudgeAmount;
+        this.nudgedBefore = 0;
     }
 
     static registerBlinkObserver(func) {
