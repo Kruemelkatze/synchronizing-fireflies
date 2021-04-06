@@ -20,7 +20,7 @@ export default class Firefly {
     speed = 0;
     rotationalSpeed = 0;
 
-    clock = 5;
+    clock = 1;
     blinkedBefore = 100;
     nudgedBefore = 100;
 
@@ -55,14 +55,14 @@ export default class Firefly {
         this.rotationalSpeed = randomFromRange(Settings.fireflyRotSpeed, r) * randomSign();
         this.graphics.rotation = Math.random() * 2 * Math.PI;
 
-        this.clock = Math.random() * Settings.blinkDelay;
+        this.clock = Math.random();
     }
 
     update(delta) {
         var deltaTime = delta / 60;
 
         // Clock
-        this.clock = this.clock - deltaTime;
+        this.clock = this.clock - deltaTime / Settings.blinkDelay;
         this.blinkedBefore += deltaTime;
         this.nudgedBefore += deltaTime;
 
@@ -104,15 +104,18 @@ export default class Firefly {
     }
 
     blink() {
-        this.clock = Settings.blinkDelay;
+        this.clock = 1;
         this.blinkedBefore = 0;
         this.light.visible = true;
 
         Firefly.notifyBlinkObservers(this);
     }
 
-    nudge() {
-        this.clock -= Settings.nudgeAmount;
+    nudge(otherClock) {
+        this.clock -= (1 - this.clock) * Settings.nudgeAmount;
+        if (this.clock < 0) {
+            this.clock = 0;
+        }
         this.nudgedBefore = 0;
     }
 

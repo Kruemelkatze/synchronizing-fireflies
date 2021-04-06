@@ -15,10 +15,10 @@ export const Settings = {
     fireflySpeed: [60, 100],
     fireflyRotSpeed: [Math.PI / 4, Math.PI / 2],
     fireflySize: 32,
-    range: 512,
-    blinkDelay: 6,
+    range: 256,
+    blinkDelay: 4,
     blinkTime: 0.2,
-    nudgeAmount: 0.12,
+    nudgeAmount: 0.2,
 }
 
 let type = "WebGL"
@@ -95,7 +95,7 @@ function onBlink(firefly, fireflies, incidenceMatrix) {
     for (let i = 0; i < fireflies.length; i++) {
         let other = fireflies[i];
         if (incidenceMatrix.isNear(firefly.index, i)) {
-            other.nudge();
+            other.nudge(firefly.clock);
         }
     }
 }
