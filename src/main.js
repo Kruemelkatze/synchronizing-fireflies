@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js';
-import Assets, { loadAllAssets } from './assets';
 import Firefly from './firefly';
 import IncidenceMatrix from './incidenceMatrix';
 import { blueNoise, whiteNoise } from './randomPositions';
+import '../style.scss'
 
 const PositionSampleType = {
     WhiteNoise: Symbol.for("White Noise"),
@@ -10,12 +10,12 @@ const PositionSampleType = {
 };
 
 export const Settings = {
-    fireflyCount: 128,
+    fireflyCount: 400,
     positionSampleType: PositionSampleType.BlueNoise,
     fireflySpeed: [60, 100],
     fireflyRotSpeed: [Math.PI / 4, Math.PI / 2],
     fireflySize: 32,
-    range: 256,
+    range: 150,
     blinkDelay: 4,
     blinkTime: 0.2,
     nudgeAmount: 0.2,
@@ -26,8 +26,6 @@ if (!PIXI.utils.isWebGLSupported()) {
     type = "canvas"
 }
 
-PIXI.utils.sayHello(type)
-
 const app = new PIXI.Application({
     backgroundColor: "0x191811",
     width: window.innerWidth,
@@ -35,14 +33,24 @@ const app = new PIXI.Application({
 });
 document.body.appendChild(app.view);
 
-
 window.addEventListener("resize", function () {
     app.renderer.resize(window.innerWidth, window.innerHeight);
 });
 
-// load the texture we need
-loadAllAssets(app).load((loader, resources) => setup(loader, resources));
-function setup(loader, resources) {
+setup();
+setupDebug();
+
+function setupDebug() {
+    let circle = new PIXI.Graphics();
+    circle.beginFill(0xff0000)
+    circle.drawCircle(app.renderer.width / 2, app.renderer.height / 2, Settings.range);
+    circle.beginHole();
+    circle.drawCircle(app.renderer.width / 2, app.renderer.height / 2, Settings.range - 2);
+
+    app.stage.addChild(circle);
+}
+
+function setup() {
     var fireflies = addFireflies();
     var incidenceMatrix = new IncidenceMatrix(fireflies, Settings.range);
 

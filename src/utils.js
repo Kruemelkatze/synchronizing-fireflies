@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js';
-import { getResource } from "./assets";
 
 export function randomFromRange([from, to], r) {
     var r = r || Math.random();
@@ -31,12 +30,11 @@ export function clamp01(x) {
 // PIXI Stuff
 
 export const PIXIFactory = Object.freeze({
-    createSprite(app, assetName, centered = true) {
-        var sprite = new PIXI.Sprite(getResource(app, assetName).texture);
+    createSprite(texture, centered = true) {
+        var sprite = new PIXI.Sprite(texture);
 
         if (centered) {
-            sprite.anchor.x = 0.5;
-            sprite.anchor.y = 0.5;
+            sprite.anchor.set(0.5);
         }
 
         return sprite;

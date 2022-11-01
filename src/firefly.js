@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import Assets, { getResource } from './assets';
+import Assets from './assets';
 import { Settings } from './main';
 import { PIXIFactory, randomFromRange, randomSign } from './utils';
 
@@ -33,10 +33,11 @@ export default class Firefly {
 
         var container = new PIXI.Container();
 
-        this.body = PIXIFactory.createSprite(app, Assets.firefly, true);
+        this.body = PIXIFactory.createSprite(Assets.firefly, true);
+        this.body.width = this.body.height = 96;
         container.addChild(this.body);
 
-        this.light = PIXIFactory.createSprite(app, Assets.light, true);
+        this.light = PIXIFactory.createSprite(Assets.light, true);
         this.light.width = this.light.height = 96;
         this.light.visible = false;
 
@@ -112,7 +113,7 @@ export default class Firefly {
     }
 
     nudge(otherClock) {
-        this.clock -= (1 - this.clock) * Settings.nudgeAmount;
+        this.clock -= (1 - this.clock) * Settings.nudgeAmount / Settings.blinkDelay;
         if (this.clock < 0) {
             this.clock = 0;
         }

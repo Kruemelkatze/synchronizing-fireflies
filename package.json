@@ -1,21 +1,22 @@
 {
-  "name": "synchronizing-fireflies",
+  "name": "fireflies",
   "version": "1.0.0",
-  "description": "",
-  "main": "src/main.js",
+  "type": "module",
+  "author": "Kruemelkatze",
+  "license": "ISC",
   "scripts": {
     "start": "npm run dev",
-    "dev": "parcel src/index.html",
-    "build": "parcel build src/index.html"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
-    "parcel-bundler": "^1.12.5",
-    "sass": "^1.32.8"
+    "sass": "^1.55.0",
+    "vite": "^3.2.0"
   },
   "dependencies": {
-    "pixi.js": "^6.0.1",
+    "lodash": "^4.17.21",
+    "pixi.js": "^7.0.2",
     "rbush": "^3.0.1",
     "tinyqueue": "^2.0.3"
   }
