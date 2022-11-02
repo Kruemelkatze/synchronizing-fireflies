@@ -1,10 +1,17 @@
-import _ from 'lodash';
 import RBush from 'rbush';
-
+// @ts-ignore
 import knn from './rbush-knn';
-import { distanceSqr, indexOfMax } from './utils';
 
-export function whiteNoise(count, w = 1, h = 1, centered = false) {
+import { distanceSqr, indexOfMax, Point } from './utils';
+
+interface Rect extends Point {
+    minX: number;
+    minY: number;
+    maxX: number;
+    maxY: number;
+}
+
+export function whiteNoise(count: number, w = 1, h = 1, centered = false) {
     var positions = new Array(count);
     for (let i = 0; i < positions.length; i++) {
         positions[i] = randomPoint(w, h, centered);
@@ -13,7 +20,7 @@ export function whiteNoise(count, w = 1, h = 1, centered = false) {
     return positions;
 }
 
-export function blueNoise(count, w = 1, h = 1, size = 0, centered = false) {
+export function blueNoise(count: number, w = 1, h = 1, size = 0, centered = false): Point[] {
     var positions = new Array(count);
 
     if (count === 0)
@@ -52,15 +59,20 @@ function randomPoint(w = 1, h = 1, centered = false) {
         y -= h / 2;
     }
 
+    x = x < 0 ? x + w : x;
+    y = y < 0 ? y + h : y;
+
     return { x, y };
 }
 
-function setRectValues(point, size) {
+function setRectValues(point: Point, size: number): Rect {
     size = size || 0;
 
-    point.minX = point.x;
-    point.minY = point.y;
-    point.maxX = point.x + size;
-    point.maxY = point.y + size;
-    return point;
+    var rect = point as Rect;
+
+    rect.minX = rect.x;
+    rect.minY = rect.y;
+    rect.maxX = rect.x + size;
+    rect.maxY = rect.y + size;
+    return rect;
 }

@@ -6,15 +6,16 @@ import { PIXIFactory, randomFromRange, randomSign } from './utils';
 
 
 export default class Firefly {
-    static staticBlinkObservers = [];
+    static staticBlinkObservers: Array<Function> = [];
 
     index = 0;
 
-    app = null;
-    graphics = null;
+    app: PIXI.Application;
+    container: PIXI.Container;
+    graphics: PIXI.Container;
 
-    body = null;
-    light = null;
+    body: PIXI.Sprite;
+    light: PIXI.Sprite;
 
     angle = 0;
     speed = 0;
@@ -24,42 +25,46 @@ export default class Firefly {
     blinkedBefore = 100;
     nudgedBefore = 100;
 
-    get x() { return this.graphics.x }
-    get y() { return this.graphics.y }
+    get x() { return this.container.x }
+    get y() { return this.container.y }
 
-    constructor(app, index, x, y) {
+    constructor(app: PIXI.Application, index: number, x: number, y: number) {
         this.app = app;
         this.index = index;
 
         var container = new PIXI.Container();
+        var graphics = new PIXI.Container();
+
+        container.addChild(graphics);
 
         this.body = PIXIFactory.createSprite(Assets.firefly, true);
         this.body.width = this.body.height = 96;
-        container.addChild(this.body);
+        graphics.addChild(this.body);
 
         this.light = PIXIFactory.createSprite(Assets.light, true);
         this.light.width = this.light.height = 96;
         this.light.visible = false;
 
-        container.addChildAt(this.light, 0);
+        graphics.addChildAt(this.light, 0);
 
         container.x = x;
         container.y = y;
-        container.width = container.height = Settings.fireflySize;
+        graphics.width = graphics.height = Settings.fireflySize;
 
-        this.graphics = container;
-        app.stage.addChild(this.graphics);
+        this.container = container;
+        this.graphics = graphics;
+        app.stage.addChild(this.container);
 
         // Setup values
         let r = Math.random(); // Kind of a speed attribute. Faster movement -> faster rotation, I guess?
         this.speed = randomFromRange(Settings.fireflySpeed, r);
         this.rotationalSpeed = randomFromRange(Settings.fireflyRotSpeed, r) * randomSign();
-        this.graphics.rotation = Math.random() * 2 * Math.PI;
+        this.container.rotation = Math.random() * 2 * Math.PI;
 
         this.clock = Math.random();
     }
 
-    update(delta) {
+    update(delta: number) {
         var deltaTime = delta / 60;
 
         // Clock
@@ -76,31 +81,31 @@ export default class Firefly {
         }
 
         // Graphics
-        this.graphics.rotation += deltaTime * this.rotationalSpeed;
+        this.container.rotation += deltaTime * this.rotationalSpeed;
         if (Math.random() * 60 < 1) { // on average, every second
             this.rotationalSpeed *= randomSign();
         }
 
-        this.graphics.rotation += this.rotationalSpeed * deltaTime;
+        this.container.rotation += this.rotationalSpeed * deltaTime;
 
-        let forward = this.graphics.rotation - Math.PI / 2;
-        this.graphics.x += this.speed * deltaTime * Math.cos(forward);
-        this.graphics.y += this.speed * deltaTime * Math.sin(forward);
+        let forward = this.container.rotation - Math.PI / 2;
+        this.container.x += this.speed * deltaTime * Math.cos(forward);
+        this.container.y += this.speed * deltaTime * Math.sin(forward);
 
         // Wrap around
-        let w = this.graphics.width / 2;
-        let h = this.graphics.height / 2;
+        let w = this.container.width / 2;
+        let h = this.container.height / 2;
 
-        if (this.graphics.x < -w) {
-            this.graphics.x = this.app.renderer.width + w;
-        } else if (this.graphics.x > this.app.renderer.width + w) {
-            this.graphics.x = -w;
+        if (this.container.x < -w) {
+            this.container.x = this.app.renderer.width + w;
+        } else if (this.container.x > this.app.renderer.width + w) {
+            this.container.x = -w;
         }
 
-        if (this.graphics.y < -h) {
-            this.graphics.y = this.app.renderer.height + h;
-        } else if (this.graphics.y > this.app.renderer.height + h) {
-            this.graphics.y = -h;
+        if (this.container.y < -h) {
+            this.container.y = this.app.renderer.height + h;
+        } else if (this.container.y > this.app.renderer.height + h) {
+            this.container.y = -h;
         }
     }
 
@@ -112,7 +117,7 @@ export default class Firefly {
         Firefly.notifyBlinkObservers(this);
     }
 
-    nudge(otherClock) {
+    nudge(otherClock: number) {
         this.clock -= (1 - this.clock) * Settings.nudgeAmount / Settings.blinkDelay;
         if (this.clock < 0) {
             this.clock = 0;
@@ -120,19 +125,19 @@ export default class Firefly {
         this.nudgedBefore = 0;
     }
 
-    static registerBlinkObserver(func) {
+    static registerBlinkObserver(func: Function) {
         if (!Firefly.staticBlinkObservers.includes(func)) {
             Firefly.staticBlinkObservers.push(func);
         }
     }
 
-    static unregisterBlinkObserver(func) {
+    static unregisterBlinkObserver(func: Function) {
         var i = Firefly.staticBlinkObservers.indexOf(func);
         if (i != -1) {
             Firefly.staticBlinkObservers.splice(i, 1);
         }
     }
-    static notifyBlinkObservers(firefly) {
+    static notifyBlinkObservers(firefly: Firefly) {
         for (const obs of Firefly.staticBlinkObservers) {
             obs(firefly);
         }

@@ -3,6 +3,7 @@ import Firefly from './firefly';
 import IncidenceMatrix from './incidenceMatrix';
 import { blueNoise, whiteNoise } from './randomPositions';
 import '../style.scss'
+import { Point } from './utils';
 
 const PositionSampleType = {
     WhiteNoise: Symbol.for("White Noise"),
@@ -11,7 +12,7 @@ const PositionSampleType = {
 
 export const Settings = {
     fireflyCount: 400,
-    positionSampleType: PositionSampleType.BlueNoise,
+    positionSampleType: PositionSampleType.WhiteNoise,
     fireflySpeed: [60, 100],
     fireflyRotSpeed: [Math.PI / 4, Math.PI / 2],
     fireflySize: 32,
@@ -21,17 +22,15 @@ export const Settings = {
     nudgeAmount: 0.2,
 }
 
-let type = "WebGL"
-if (!PIXI.utils.isWebGLSupported()) {
-    type = "canvas"
-}
-
 const app = new PIXI.Application({
     backgroundColor: "0x191811",
     width: window.innerWidth,
     height: window.innerHeight,
 });
-document.body.appendChild(app.view);
+
+var fireflies = new Array<Firefly>();
+var debugCircle;
+document.body.appendChild(app.view as any);
 
 window.addEventListener("resize", function () {
     app.renderer.resize(window.innerWidth, window.innerHeight);
@@ -41,24 +40,30 @@ setup();
 setupDebug();
 
 function setupDebug() {
-    let circle = new PIXI.Graphics();
-    circle.beginFill(0xff0000)
-    circle.drawCircle(app.renderer.width / 2, app.renderer.height / 2, Settings.range);
-    circle.beginHole();
-    circle.drawCircle(app.renderer.width / 2, app.renderer.height / 2, Settings.range - 2);
+    let fireboss = fireflies[0].container;
 
-    app.stage.addChild(circle);
+    debugCircle = new PIXI.Graphics();
+    debugCircle.beginFill(0xff0000)
+    debugCircle.drawCircle(0, 0, Settings.range);
+    debugCircle.beginHole();
+    debugCircle.drawCircle(0, 0, Settings.range - 2);
+
+    fireboss.addChild(debugCircle);
+
 }
 
 function setup() {
-    var fireflies = addFireflies();
+    fireflies = addFireflies();
     var incidenceMatrix = new IncidenceMatrix(fireflies, Settings.range);
+    incidenceMatrix.updateIncidenceMatrix();
 
+    let n = 0;
     app.ticker.add((delta) => {
-        incidenceMatrix.updateIncidenceMatrix();
+        incidenceMatrix.updateIncidenceMatrix(4, n);
+        n = (n + 1) % 4;
     })
 
-    Firefly.registerBlinkObserver(firefly => onBlink(firefly, fireflies, incidenceMatrix));
+    Firefly.registerBlinkObserver((firefly: Firefly) => onBlink(firefly, fireflies, incidenceMatrix));
 }
 
 function addFireflies() {
@@ -79,17 +84,17 @@ function addFireflies() {
     return fireflies;
 }
 
-function getPositions(count) {
+function getPositions(count: number): Point[] {
     var positions;
 
     var start = Date.now();
 
     switch (Settings.positionSampleType) {
         case PositionSampleType.BlueNoise:
-            positions = blueNoise(count, app.renderer.width, app.renderer.height);
+            positions = blueNoise(count, app.renderer.width, app.renderer.height, Settings.fireflySize);
             break;
         default:
-            positions = whiteNoise(count, app.renderer.width, app.renderer.height, Settings.fireflySize);
+            positions = whiteNoise(count, app.renderer.width, app.renderer.height);
             break;
     }
 
@@ -99,7 +104,7 @@ function getPositions(count) {
     return positions;
 }
 
-function onBlink(firefly, fireflies, incidenceMatrix) {
+function onBlink(firefly: Firefly, fireflies: Firefly[], incidenceMatrix: IncidenceMatrix) {
     for (let i = 0; i < fireflies.length; i++) {
         let other = fireflies[i];
         if (incidenceMatrix.isNear(firefly.index, i)) {

@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 
-import fireflySprite from "../assets/firefly.png";
+import fireflySprite from "../assets/firefly.png" ;
 import lightSprite from "../assets/light.png";
 
 const Assets = {
