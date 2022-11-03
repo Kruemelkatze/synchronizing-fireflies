@@ -20,6 +20,7 @@ export const Settings = {
     blinkDelay: 4,
     blinkTime: 0.2,
     nudgeAmount: 0.2,
+    timeScale: 1,
 }
 
 const app = new PIXI.Application({
