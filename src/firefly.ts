@@ -4,7 +4,6 @@ import { Settings } from './main';
 import { PIXIFactory, randomFromRange, randomSign } from './utils';
 
 
-
 export default class Firefly {
     static staticBlinkObservers: Array<Function> = [];
 
@@ -42,8 +41,9 @@ export default class Firefly {
         graphics.addChild(this.body);
 
         this.light = PIXIFactory.createSprite(Assets.light, true);
-        this.light.width = this.light.height = 96;
+        this.light.width = this.light.height = 64;
         this.light.visible = false;
+        this.light.position = new PIXI.Point(0, 18);
 
         graphics.addChildAt(this.light, 0);
 

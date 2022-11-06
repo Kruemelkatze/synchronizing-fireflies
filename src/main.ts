@@ -17,9 +17,9 @@ export const Settings = {
     fireflyRotSpeed: [Math.PI / 4, Math.PI / 2],
     fireflySize: 32,
     range: 150,
-    blinkDelay: 4,
+    blinkDelay: 6,
     blinkTime: 0.2,
-    nudgeAmount: 0.2,
+    nudgeAmount: 0.4,
 }
 
 const app = new PIXI.Application({
