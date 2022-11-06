@@ -65,6 +65,7 @@ export default class Firefly {
     }
 
     update(delta: number) {
+        delta *= Settings.timeScale;
         var deltaTime = delta / 60;
 
         // Clock
